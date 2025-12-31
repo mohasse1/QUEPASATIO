@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gala 2026 | Que pasa tío...?</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+        :root {
+            /* Colores Base */
+            --italy-green: #0A8F52;
+            --italy-red: #C1002A;
+            --gold: #C5A02B;
+            --gold-light: #e0c366;
+            --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            
+            /* Variables de Modo (Por defecto: Nocturno) */
+            --bg-body: #050505;
+            --bg-card: rgba(20, 20, 20, 0.9);
+            --text-main: #FFFFFF;
+            --text-muted: #a0a0a0;
+            --border-color: rgba(197, 160, 43, 0.15);
+            --nav-bg: rgba(255, 255, 255, 0.03);
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Estilos Modo Diurno */
+        body.light-mode {
+            --bg-body: #fdfaf3;
+            --bg-card: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border-color: rgba(197, 160, 43, 0.3);
+            --nav-bg: rgba(0, 0, 0, 0.05);
+            --shadow: 0 10px 30px rgba(197, 160, 43, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Fondo estrellado solo en modo oscuro */
+        body:not(.light-mode)::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+
+        /* --- BOTÓN MODO --- */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--gold);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: none;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        .theme-toggle:active { transform: scale(0.9); }
+
+        /* --- LOGO --- */
+        .brand-identity { text-align: center; padding: 40px 10px 25px; }
+        .brand-descriptor {
+            font-weight: 300; font-size: clamp(0.5rem, 2.2vw, 0.65rem);
+            letter-spacing: 6px; color: var(--gold); text-transform: uppercase;
+        }
+        .brand-main-name {
+            font-family: 'Brush Script MT', cursive;
+            font-size: clamp(2.6rem, 11vw, 4.8rem); 
+            color: var(--text-main); line-height: 1.1; margin: 5px 0;
+            filter: drop-shadow(0 0 8px rgba(197, 160, 43, 0.2));
+        }
+
+        .brand-footer-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .line-italy { height: 1px; width: 50px; }
+        .line-green { background: linear-gradient(to right, transparent, var(--italy-green)); }
+        .line-red { background: linear-gradient(to left, transparent, var(--italy-red)); }
+        .brand-slogan { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.7rem; letter-spacing: 2px; }
+
+        /* --- CONTENIDO --- */
+        .gala-title { font-family: 'Playfair Display', serif; font-size: clamp(1.3rem, 5.5vw, 1.7rem); color: var(--gold); text-align: center; margin-bottom: 20px; }
+        
+        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 30px; }
+        .cd-box { 
+            background: var(--bg-card); border: 1px solid var(--border-color); 
+            padding: 12px 2px; border-radius: 12px; text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .cd-num { display: block; font-size: 1.4rem; font-weight: 700; color: var(--gold); font-family: 'Playfair Display', serif; }
+        .cd-label { font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted); }
+
+        .menu-nav { 
+            display: flex; background: var(--nav-bg); padding: 5px; 
+            border-radius: 50px; margin: 25px 0; border: 1px solid var(--border-color); 
+        }
+        .menu-btn { 
+            flex: 1; padding: 12px; border-radius: 40px; border: none; 
+            background: transparent; color: var(--text-muted); font-weight: 700; 
+            font-size: 0.75rem; text-transform: uppercase; cursor: pointer; transition: var(--transition); 
+        }
+        .menu-btn.active { background: var(--gold); color: white; }
+
+        .price-circle { text-align: center; margin-bottom: 35px; }
+        .price-val { font-size: 3.5rem; font-family: 'Playfair Display', serif; color: var(--gold); position: relative; display: inline-block; }
+        .price-val span { font-size: 1.2rem; position: absolute; top: 10px; right: -25px; }
+
+        .course-title { 
+            font-family: 'Playfair Display', serif; color: var(--gold); 
+            font-size: 1.2rem; margin: 40px 0 15px; display: flex; align-items: center; gap: 15px; 
+        }
+        .course-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); opacity: 0.3; }
+
+        .dish-card { 
+            background: var(--bg-card); padding: 20px; border-radius: 15px; 
+            margin-bottom: 15px; border: 1px solid var(--border-color);
+            box-shadow: var(--shadow); transition: var(--transition);
+        }
+        .dish-header { font-weight: 700; font-size: 1.05rem; margin-bottom: 5px; }
+        .dish-desc { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
+
+        .footer-banner { 
+            background: var(--bg-card); padding: 40px 20px; border-radius: 20px; 
+            text-align: center; margin: 60px 0; border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .lang-fixed { 
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            z-index: 100; background: var(--gold); color: white; 
+            padding: 10px 20px; border-radius: 50px; font-weight: 700; 
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        select { background: transparent; border: none; font-weight: 700; color: white; outline: none; font-size: 0.8rem; }
+        option { color: black; }
+
+        hr { border: 0; border-top: 1px solid var(--border-color); margin: 20px auto; width: 50%; }
+    </style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+    <i class="fas fa-sun"></i>
+</button>
+
+<div class="container">
+    <header class="brand-identity">
+        <div class="brand-descriptor">Restaurante Pizzeria & Grill</div>
+        <h1 class="brand-main-name">Que pasa Tío…?</h1>
+        <div class="brand-footer-wrap">
+            <div class="line-italy line-green"></div>
+            <span class="brand-slogan">Simplemente Italiano</span>
+            <div class="line-italy line-red"></div>
+        </div>
+    </header>
+
+    <div class="event-info">
+        <h2 class="gala-title" data-t="galaTitle">Gala de Nochevieja 2026</h2>
+        <div class="countdown-grid">
+            <div class="cd-box"><span class="cd-num" id="d">00</span><span class="cd-label" data-t="days">Días</span></div>
+            <div class="cd-box"><span class="cd-num" id="h">00</span><span class="cd-label" data-t="hours">Horas</span></div>
+            <div class="cd-box"><span class="cd-num" id="m">00</span><span class="cd-label" data-t="mins">Min</span></div>
+            <div class="cd-box"><span class="cd-num" id="s">00</span><span class="cd-label" data-t="secs">Seg</span></div>
+        </div>
+    </div>
+
+    <div class="menu-nav">
+        <button class="menu-btn active" onclick="switchMenu('fish', this)" data-t="btnFish">Pescado 🍤</button>
+        <button class="menu-btn" onclick="switchMenu('meat', this)" data-t="btnMeat">Carne 🍖</button>
+    </div>
+
+    <div class="price-circle">
+        <div class="price-val" id="price-tag">90<span>€</span></div>
+        <div class="cd-label" data-t="priceDesc">Precio por cubierto</div>
+    </div>
+
+    <div id="menu-content"></div>
+
+    <div class="course-title" data-t="dessertTitle">El Postre</div>
+    <div class="dish-card" style="text-align: center;">
+        <div class="dish-header" data-t="dessertHeader">PANETTONE / PANDORO 😍🍧</div>
+        <div class="dish-desc" data-t="dessertDesc">*Artesanal "Jacopo Maestri"<br>Café y amaro de la casa</div>
+    </div>
+
+    <div class="footer-banner">
+        <p style="color: var(--gold); font-weight: 700; margin-bottom: 10px; letter-spacing: 2px;" data-t="wineTitle">INCLUYE</p>
+        <p class="dish-desc" data-t="wineDesc">Agua mineral y medio litro de vino por persona (blanco, tinto o rosado).</p>
+        <hr>
+        <p class="gala-title" style="margin-bottom: 0;" data-t="liveMusic">MÚSICA 🎶 BAILE 🕺 Y SORPRESAS 🥰</p>
+    </div>
+</div>
+
+<div class="lang-fixed">
+    <i class="fas fa-globe"></i>
+    <select onchange="changeLanguage(this.value)">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="it">Italiano</option>
+        <option value="de">Deutsch</option>
+        <option value="fr">Français</option>
+        <option value="no">Norsk</option>
+    </select>
+</div>
+
+<script>
+    let currentLang = 'es';
+    let currentMenu = 'fish';
+
+    const translations = {
+        es: {
+            galaTitle: "Gala de Nochevieja 2026",
+            days: "Días", hours: "Horas", mins: "Min", secs: "Seg",
+            btnFish: "Pescado 🍤", btnMeat: "Carne 🍖",
+            priceDesc: "Precio por cubierto",
+            dessertTitle: "El Postre",
+            dessertHeader: "PANETTONE / PANDORO 😍🍧",
+            dessertDesc: "*Artesanal \"Jacopo Maestri\"<br>Café y amaro de la casa",
+            wineTitle: "INCLUYE",
+            wineDesc: "Agua mineral y medio litro de vino por persona (blanco, tinto o rosado).",
+            liveMusic: "MÚSICA 🎶 BAILE 🕺 Y SORPRESAS 🥰",
+            courses: { welcome: "Aperitivo 🍹", starters: "Entrantes", primi: "Primeros", secondo: "Segundo" },
+            fish: [
+                { h: "Aperitivo de Bienvenida", d: "Copa de cortesía especial de la casa.", c: "welcome" },
+                { h: "🔸 Caponata Siciliana 🍊", d: "Con mousse de mozzarella de búfala.", c: "starters" },
+                { h: "🔸 Sopa de Atún Fresco", d: "Filete de atún con crema de gambas 🦐 y yuca.", c: "starters" },
+                { h: "🔸 Risotto al Champagne 🍾", d: "Con espárragos y gamberón al brandy.", c: "primi" },
+                { h: "🔸 Paccheri al Ragú", d: "De cigalas frescas (scampi) 🍤.", c: "primi" },
+                { h: "🔸 Pastel de Mero (Cernia)", d: "Con puré de zanahoria del campo 🥕.", c: "secondo" }
+            ],
+            meat: [
+                { h: "Aperitivo de Bienvenida", d: "Copa de cortesía para iniciar la celebración.", c: "welcome" },
+                { h: "🔸 Caponata Siciliana 🍊", d: "Con mousse de mozzarella de búfala.", c: "starters" },
+                { h: "🔸 Pastel de Papas y Albóndigas", d: "Tortino de patatas con polpettine al sugo casero.", c: "starters" },
+                { h: "🔸 Risotto al Champagne 🍾", d: "Con espárragos y salchicha artesanal crujiente.", c: "primi" },
+                { h: "🔸 Paccheri al Brasato", d: "De solomillo de Angus argentino estofado.", c: "primi" },
+                { h: "🔸 Ternera Asada Rellena", d: "Con frutas de invierno y puré de zanahorias 🥕🍖.", c: "secondo" }
+            ]
+        },
+        en: {
+            galaTitle: "New Year's Eve Gala 2026",
+            days: "Days", hours: "Hrs", mins: "Min", secs: "Sec",
+            btnFish: "Seafood 🍤", btnMeat: "Meat 🍖",
+            priceDesc: "Price per guest",
+            dessertTitle: "Dessert",
+            dessertHeader: "PANETTONE / PANDORO 😍🍧",
+            dessertDesc: "*Artisanal by \"Jacopo Maestri\"<br>Coffee and house amaro",
+            wineTitle: "INCLUDES",
+            wineDesc: "Mineral water and half a liter of wine per person (white, red or rosé).",
+            liveMusic: "MUSIC 🎶 DANCING 🕺 & SURPRISES 🥰",
+            courses: { welcome: "Welcome Drink 🍹", starters: "Starters", primi: "First Course", secondo: "Main Course" },
+            fish: [
+                { h: "Welcome Appetizer", d: "Special house courtesy glass.", c: "welcome" },
+                { h: "🔸 Sicilian Caponata 🍊", d: "With buffalo mozzarella mousse.", c: "starters" },
+                { h: "🔸 Fresh Tuna Soup", d: "Tuna fillet with prawns cream 🦐 and yucca.", c: "starters" },
+                { h: "🔸 Champagne Risotto 🍾", d: "With asparagus and brandy king prawn.", c: "primi" },
+                { h: "🔸 Scampi Ragout Paccheri", d: "With fresh scampi 🍤.", c: "primi" },
+                { h: "🔸 Grouper Cake", d: "With country carrot puree 🥕.", c: "secondo" }
+            ],
+            meat: [
+                { h: "Welcome Appetizer", d: "Complimentary drink to start the celebration.", c: "welcome" },
+                { h: "🔸 Sicilian Caponata 🍊", d: "With buffalo mozzarella mousse.", c: "starters" },
+                { h: "🔸 Potato Cake & Meatballs", d: "Potato tart with meatballs in house tomato sauce.", c: "starters" },
+                { h: "🔸 Champagne Risotto 🍾", d: "With asparagus and crispy artisanal sausage.", c: "primi" },
+                { h: "🔸 Braised Angus Paccheri", d: "With Argentinian Angus beef braised.", c: "primi" },
+                { h: "🔸 Roasted Veal Stuffed", d: "With winter fruits and carrot puree 🥕🍖.", c: "secondo" }
+            ]
+        },
+        it: {
+            galaTitle: "Gala di Capodanno 2026",
+            days: "Giorni", hours: "Ore", mins: "Min", secs: "Sec",
+            btnFish: "Pesce 🍤", btnMeat: "Carne 🍖",
+            priceDesc: "Prezzo a persona",
+            dessertTitle: "Il Dolce",
+            dessertHeader: "PANETTONE / PANDORO 😍🍧",
+            dessertDesc: "*Artigianale \"Jacopo Maestri\"<br>Caffè e amaro della casa",
+            wineTitle: "INCLUDE",
+            wineDesc: "Acqua minerale e mezzo litro di vino a persona (bianco, rosso o rosato).",
+            liveMusic: "MUSICA 🎶 BALLO 🕺 E SORPRESE 🥰",
+            courses: { welcome: "Aperitivo 🍹", starters: "Antipasti", primi: "Primi Piatti", secondo: "Secondo Piatto" },
+            fish: [
+                { h: "Aperitivo di Benvenuto", d: "Calice di cortesia speciale della casa.", c: "welcome" },
+                { h: "🔸 Caponata Siciliana 🍊", d: "Con mousse di mozzarella di bufala.", c: "starters" },
+                { h: "🔸 Zuppa di Filetto di Tonno", d: "Fresco con crema di gamberi e yuca 🦐.", c: "starters" },
+                { h: "🔸 Risotto allo Champagne 🍾", d: "Con asparagi e gamberone al brandy.", c: "primi" },
+                { h: "🔸 Paccheri al Ragù", d: "Di scampi freschi 🍤.", c: "primi" },
+                { h: "🔸 Tortino di Cernia", d: "Con purè di carota del campo 🥕.", c: "secondo" }
+            ],
+            meat: [
+                { h: "Aperitivo di Benvenuto", d: "Drink di cortesia per iniziare la festa.", c: "welcome" },
+                { h: "🔸 Caponata Siciliana 🍊", d: "Con mousse di mozzarella di bufala.", c: "starters" },
+                { h: "🔸 Tortino di Patate", d: "Con polpettine al sugo.", c: "starters" },
+                { h: "🔸 Risotto Asparagi e Champagne 🍾", d: "Con salsiccia artigianale croccante.", c: "primi" },
+                { h: "🔸 Paccheri al Brasato", d: "D'Angus argentino stufato.", c: "primi" },
+                { h: "🔸 Arrosto di Vitello Farcito", d: "Ai frutti invernali con purè di carote 🥕🍖.", c: "secondo" }
+            ]
+        },
+        de: {
+            galaTitle: "Silvestergala 2026",
+            days: "Tage", hours: "Std", mins: "Min", secs: "Sek",
+            btnFish: "Fisch 🍤", btnMeat: "Fleisch 🍖",
+            priceDesc: "Preis pro Person",
+            dessertTitle: "Nachtisch",
+            dessertHeader: "PANETTONE / PANDORO 😍🍧",
+            dessertDesc: "*Handgefertigt von \"Jacopo Maestri\"<br>Kaffee und Haus-Amaro",
+            wineTitle: "INKLUSIVE",
+            wineDesc: "Mineralwasser und ein halber Liter Wein pro Person (Weiß, Rot oder Rosé).",
+            liveMusic: "MUSIK 🎶 TANZ 🕺 & ÜBERRASCHUNGEN 🥰",
+            courses: { welcome: "Aperitif 🍹", starters: "Vorspeisen", primi: "Erster Gang", secondo: "Hauptgang" },
+            fish: [
+                { h: "Willkommens-Aperitif", d: "Spezielle Begrüßung des Hauses.", c: "welcome" },
+                { h: "🔸 Sizilianische Caponata 🍊", d: "Mit Büffelmozzarella-Mousse.", c: "starters" },
+                { h: "🔸 Frische Thunfischsuppe", d: "Mit Garnelencreme 🦐 und Maniok.", c: "starters" },
+                { h: "🔸 Champagner-Risotto 🍾", d: "Mit Spargel und Brandy-Riesengarnele.", c: "primi" },
+                { h: "🔸 Paccheri mit Scampi-Ragout", d: "Mit frischen Scampi 🍤.", c: "primi" },
+                { h: "🔸 Zackenbarsch-Törtchen", d: "Mit Karottenpüree vom Feld 🥕.", c: "secondo" }
+            ],
+            meat: [
+                { h: "Willkommens-Aperitif", d: "Begrüßungsgetränk zum Start der Feier.", c: "welcome" },
+                { h: "🔸 Sizilianische Caponata 🍊", d: "Mit Büffelmozzarella-Mousse.", c: "starters" },
+                { h: "🔸 Kartoffel-Törtchen & Fleischbällchen", d: "In hausgemachter Tomatensauce.", c: "starters" },
+                { h: "🔸 Champagner-Risotto 🍾", d: "Mit Spargel und knuspriger Wurst.", c: "primi" },
+                { h: "🔸 Paccheri mit Angus-Ragout", d: "Argentinisches Angus-Rindfleisch geschmort.", c: "primi" },
+                { h: "🔸 Kalbsbraten gefüllt", d: "Mit Winterfrüchten und Karottenpüree 🥕🍖.", c: "secondo" }
+            ]
+        },
+        fr: {
+            galaTitle: "Gala du Nouvel An 2026",
+            days: "Jours", hours: "Hrs", mins: "Min", secs: "Sec",
+            btnFish: "Poisson 🍤", btnMeat: "Viande 🍖",
+            priceDesc: "Prix par personne",
+            dessertTitle: "Dessert",
+            dessertHeader: "PANETTONE / PANDORO 😍🍧",
+            dessertDesc: "*Artisanal par \"Jacopo Maestri\"<br>Café et amaro maison",
+            wineTitle: "INCLUS",
+            wineDesc: "Eau minérale et demi-litre de vin (blanc, rouge ou rosé).",
+            liveMusic: "MUSIQUE 🎶 DANSE 🕺 & SURPRISES 🥰",
+            courses: { welcome: "Apéritif 🍹", starters: "Entrées", primi: "Premiers Plats", secondo: "Plat Principal" },
+            fish: [
+                { h: "Apéritif de Bienvenue", d: "Verre de courtoisie de la maison.", c: "welcome" },
+                { h: "🔸 Caponata Sicilienne 🍊", d: "Mousse de mozzarella di bufala.", c: "starters" },
+                { h: "🔸 Soupe de Thon Frais", d: "Thon à la crème de crevettes 🦐 et manioc.", c: "starters" },
+                { h: "🔸 Risotto au Champagne 🍾", d: "Asperges et gambas au brandy.", c: "primi" },
+                { h: "🔸 Paccheri au Ragout", d: "Langoustines fraîches (scampi) 🍤.", c: "primi" },
+                { h: "🔸 Gâteau de Mérou", d: "Purée de carottes 🥕.", c: "secondo" }
+            ],
+            meat: [
+                { h: "Apéritif de Bienvenue", d: "Verre de bienvenue.", c: "welcome" },
+                { h: "🔸 Caponata Sicilienne 🍊", d: "Mousse de mozzarella di bufala.", c: "starters" },
+                { h: "🔸 Gâteau de Pommes de Terre", d: "Et boulettes de viande à la tomate.", c: "starters" },
+                { h: "🔸 Risotto au Champagne 🍾", d: "Asperges et saucisse artisanale croustillante.", c: "primi" },
+                { h: "🔸 Paccheri au Angus", d: "Boeuf Angus argentin braisé.", c: "primi" },
+                { h: "🔸 Veau Rôti Farci", d: "Fruits d'hiver et purée de carottes 🥕🍖.", c: "secondo" }
+            ]
+        },
+        no: {
+            galaTitle: "Nyttårsgalla 2026",
+            days: "Dager", hours: "Timer", mins: "Min", secs: "Sek",
+            btnFish: "Fisk 🍤", btnMeat: "Kjøtt 🍖",
+            priceDesc: "Pris per person",
+            dessertTitle: "Dessert",
+            dessertHeader: "PANETTONE / PANDORO 😍🍧",
+            dessertDesc: "*Håndlaget av \"Jacopo Maestri\"<br>Kaffe og husets amaro",
+            wineTitle: "INKLUDERT",
+            wineDesc: "Mineralvann og en halv liter vin (hvit, rød eller rosé).",
+            liveMusic: "MUSIKK 🎶 DANS 🕺 & OVERRASKELSER 🥰",
+            courses: { welcome: "Velkomstdrink 🍹", starters: "Forretter", primi: "Første Retter", secondo: "Hovedrett" },
+            fish: [
+                { h: "Velkomstaperitiff", d: "Et spesielt glass fra huset.", c: "welcome" },
+                { h: "🔸 Siciliansk Caponata 🍊", d: "Med bøffelmozzarella-mousse.", c: "starters" },
+                { h: "🔸 Fersk Tunfisksuppe", d: "Tunfisk med rekekrem 🦐 og maniok.", c: "starters" },
+                { h: "🔸 Champagne-risotto 🍾", d: "Med asparges og konge-reker.", c: "primi" },
+                { h: "🔸 Paccheri med Sjøkreps", d: "Fersk sjøkreps (scampi) 🍤.", c: "primi" },
+                { h: "🔸 Havabbor-kake", d: "Med gulrotpuré 🥕.", c: "secondo" }
+            ],
+            meat: [
+                { h: "Velkomstaperitiff", d: "Velkomstdrink til festen.", c: "welcome" },
+                { h: "🔸 Siciliansk Caponata 🍊", d: "Bøffelmozzarella-mousse.", c: "starters" },
+                { h: "🔸 Potetkake & Kjøttboller", d: "I hjemmelaget tomatsaus.", c: "starters" },
+                { h: "🔸 Champagne-risotto 🍾", d: "Asparges og sprø håndverks-pølse.", c: "primi" },
+                { h: "🔸 Paccheri med Angus", d: "Brasert argentinsk Angus-biff.", c: "primi" },
+                { h: "🔸 Stekt Kalvekjøtt Fylt", d: "Vinterfrukt og gulrotpuré 🥕🍖.", c: "secondo" }
+            ]
+        }
+    };
+
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+        body.classList.toggle('light-mode');
+        
+        if(body.classList.contains('light-mode')) {
+            btn.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            btn.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    }
+
+    function renderMenu() {
+        const container = document.getElementById('menu-content');
+        const data = translations[currentLang][currentMenu];
+        const courseNames = translations[currentLang].courses;
+        let html = '';
+        let lastCourse = '';
+        data.forEach(item => {
+            if (item.c !== lastCourse) {
+                html += `<h3 class="course-title">${courseNames[item.c]}</h3>`;
+                lastCourse = item.c;
+            }
+            html += `
+                <div class="dish-card">
+                    <div class="dish-header">${item.h}</div>
+                    <div class="dish-desc">${item.d}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        document.getElementById('price-tag').innerHTML = currentMenu === 'fish' ? '90<span>€</span>' : '80<span>€</span>';
+    }
+
+    function changeLanguage(lang) {
+        currentLang = lang;
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            if (translations[lang][key]) el.innerHTML = translations[lang][key];
+        });
+        renderMenu();
+    }
+
+    function switchMenu(type, btn) {
+        currentMenu = type;
+        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderMenu();
+    }
+
+    function updateCountdown() {
+        const target = new Date('January 1, 2026 00:00:00').getTime();
+        const now = new Date().getTime();
+        const diff = target - now;
+        if (diff <= 0) {
+            document.querySelector('.event-info').innerHTML = "<h2 class='gala-title'>¡Feliz Año Nuevo 2026!</h2>";
+            return;
+        }
+        document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('h').innerText = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+        document.getElementById('m').innerText = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        document.getElementById('s').innerText = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+    renderMenu();
+</script>
+
+</body>
+</html>
